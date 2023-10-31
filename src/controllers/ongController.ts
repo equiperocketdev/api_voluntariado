@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Op } from 'sequelize'
 import { criptografarSenha } from '../auth/bcrypt'
-import { Ong } from '../models/ongModel'
+import { Ong, OngInstance } from '../models/ongModel'
 
 export const listarOngs = async (req: Request, res: Response) => {
     try {
@@ -14,7 +14,7 @@ export const listarOngs = async (req: Request, res: Response) => {
         res.status(200).json(ongs)
     } 
     catch (error) {
-        res.json("Deu ruim: " + error)
+        res.status(400).json("Deu ruim: " + error)
     }
 }
 
@@ -35,17 +35,28 @@ export const cadastrarOng = async (req: Request, res: Response) => {
         res.status(201).send()
     } 
     catch (error) {
-        res.json("Deu ruim: " + error)
+        res.status(400).json("Deu ruim: " + error)
     }
 }
 
 export const getOngByName = async (req: Request, res: Response) => {
     try {
         const { nome } = req.params
+        const ongs = Ong.findAll({
+            where: {
+                nome: {
+                    [Op.iLike]: `%${nome}%`
+                }
+            },
+            attributes: {
+                exclude: ['id', 'senha']
+            },
+            order: ['nome']
+        })
 
-        const 
+        return res.status(200).json(ongs)
 
     } catch (error) {
-        res.json("Deu ruim: " + error)
+        res.status(400).json("Deu ruim: " + error)
     }
 }

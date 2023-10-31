@@ -6,5 +6,4 @@ export const criptografarSenha = async (senha: string) => {
 
 export const verificarSenha = async (senha: string, senhaCriptografada: string) => {
     return await bcrypt.compare(senha, senhaCriptografada)
-    
 }

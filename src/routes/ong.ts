@@ -4,5 +4,6 @@ import { cadastrarOng, getOngByName, listarOngs } from '../controllers/ongContro
 export const ongRoute = express()
 
 ongRoute.get('/ongs', listarOngs)
-ongRoute.get('/ongs/cadastrar', cadastrarOng)
-ongRoute.get('/ongs/buscar/:nome', getOngByName)
+ongRoute.get('/ongs/buscar/:nome', listarOngs)
+
+ongRoute.post('/ongs/cadastrar', cadastrarOng)

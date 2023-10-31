@@ -35,7 +35,10 @@ export const User = sequelize.define<UserInstance>("User", {
         type: DataTypes.DATE
     },
     empresa_id: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        references: { model: 'empresas', key: 'id'  },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     },
     data_nasc: {
         type: DataTypes.DATE
@@ -48,7 +51,8 @@ export const User = sequelize.define<UserInstance>("User", {
 });
 User.belongsTo(Empresa, {
     constraints: true,
-    foreignKey: 'empresa_id'
+    foreignKey: 'empresa_id',
+    onDelete: 'CASCADE'
 })
 
 Empresa.hasMany(User, {
