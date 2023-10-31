@@ -51,6 +51,6 @@ npm run dev
 - 👨‍💻 Rodrigo Daniel: https://github.com/Spyke27
 - 👨‍💻 Henrique Martins: https://github.com/HenriqueMarts
 - 👩‍💻 Jéssica Oliveira:
-- 👨‍💻 Wagner Fonseca:
+- 👨‍💻 Wagner Fonseca: https://github.com/Wagner-Fonseca
 - 👨‍💻 Luis Guilherme:
-- 👨‍💻 Carlos Eduardo:
+- 👨‍💻 Carlos Eduardo: https://github.com/carlosbaptistaa
