@@ -18,17 +18,17 @@ const notAuthorized = {
 
 passport.use(new JWTStrategy(options, async (payload, done) => {
     const user = await User.findByPk(payload.id)
+    
     if(user){
         return done(null, user)
     } else {
-        return done(notAuthorized, false)
+        return done(notAuthorized.message, false)
     }   
 }))
 
-export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('jwt', (erro: any, user: UserInstance) => {
-        const { id } = user
-        req.user = id
+export const verifyTokenUser = (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate('jwt', (_erro: any, user: UserInstance) => {
+        req.user = user.id
         return user ? next() : next(notAuthorized.message)
     })(req, res, next)
 }
