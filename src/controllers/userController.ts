@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 import { User } from '../models/userModel'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Empresa } from '../models/empresaModel'
+import { Endereco } from '../models/enderecoModel'
 
 export const listarUsuarios = async (req: Request, res: Response) => {
     try {
@@ -128,7 +129,16 @@ export const deletarUsuario = async (req: Request, res: Response) => {
 export const perfil = async (req: Request, res: Response) => {
     try {
         const id = req.user
-        const user = await User.findOne({where: { id } })
+        const user = await User.findOne({
+            where: { id },
+            attributes: {
+                exclude: ['senha', 'empresa_id']
+            },
+            include: [
+                { model: Empresa, attributes: ['nome'] },
+                { model: Endereco, attributes: {exclude: ['id', 'usuario_id', 'empresa_id', 'ong_id']} }
+            ]
+        })
     
         return res.status(200).json(user)
         
