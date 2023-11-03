@@ -127,3 +127,16 @@ export const deletarEmpresa = async (req: Request, res: Response) => {
         res.status(400).json("Deu ruim: " + error)
     }
 }
+
+export const infoEmpresa = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        const empresa = await Empresa.findOne({ where: { id }});
+
+        return res.status(200).json(empresa)
+    } 
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
