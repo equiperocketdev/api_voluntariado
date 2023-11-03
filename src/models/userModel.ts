@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../db/pg";
 import { Empresa } from '../models/empresaModel'
+import { Endereco } from "./enderecoModel";
 
 export interface UserInstance extends Model {
     id: number;
