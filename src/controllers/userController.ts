@@ -4,6 +4,8 @@ import { User } from '../models/userModel'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Empresa } from '../models/empresaModel'
 import { Endereco } from '../models/enderecoModel'
+import { VagaUsuario } from '../models/vagaUsuario'
+import { Vaga } from '../models/vagasModel'
 
 export const listarUsuarios = async (req: Request, res: Response) => {
     try {
@@ -24,7 +26,7 @@ export const listarUsuarios = async (req: Request, res: Response) => {
         res.status(400).json("Deu ruim: " + error)
     }
 }
-// Pesquisar pelo nome
+
 export const getUserByName = async (req: Request, res: Response) => {
     try {
         const nome = req.params.nome
@@ -46,7 +48,7 @@ export const getUserByName = async (req: Request, res: Response) => {
         res.status(400).json("Deu ruim: " + error)
     }
 }
-// Pesquisar pelo ID
+
 export const getUserById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
@@ -136,7 +138,8 @@ export const perfil = async (req: Request, res: Response) => {
             },
             include: [
                 { model: Empresa, attributes: ['nome'] },
-                { model: Endereco, attributes: {exclude: ['id', 'usuario_id', 'empresa_id', 'ong_id']} }
+                { model: Endereco, attributes: {exclude: ['id', 'usuario_id', 'empresa_id', 'ong_id']} },
+                { model: Vaga, attributes: ['titulo']}
             ]
         })
     
