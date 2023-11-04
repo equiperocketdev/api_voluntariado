@@ -20,7 +20,7 @@ export const listarOngs = async (req: Request, res: Response) => {
 
 export const cadastrarOng = async (req: Request, res: Response) => {
     const { cnpj, nome, email, senha, sobre } = req.body
-    if (!cnpj || !nome || !email || !senha || !sobre) {
+    if (!nome || !email || !senha || !sobre) {
         return res.status(400).json("Digite todos os dados!")
     }
     

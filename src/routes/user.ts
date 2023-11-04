@@ -2,6 +2,7 @@ import express from 'express';
 import { cadastrarUsuario, deletarUsuario, listarUsuarios, getUserById, getUserByName, atualizarUsuario, perfil } 
 from '../controllers/userController';
 import { verifyTokenUser } from '../config/passport';
+import { verifyToken } from '../auth/verifyToken'
 
 export const userRoute = express();
 
