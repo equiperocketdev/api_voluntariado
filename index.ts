@@ -8,6 +8,7 @@ import { ongRoute } from './src/routes/ong';
 import bodyParser from 'body-parser';
 import { login } from './src/auth/login';
 import { enderecoRoute } from './src/routes/endereco';
+import { vagaRoute } from './src/routes/vaga';
 
 dotenv.config();
 
@@ -23,5 +24,6 @@ app.use(userRoute)
 app.use(empresaRoute)
 app.use(ongRoute)
 app.use(enderecoRoute)
+app.use(vagaRoute)
 
 app.listen(process.env.PORT || 3000)
