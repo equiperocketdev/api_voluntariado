@@ -41,8 +41,8 @@ export const cadastrarOng = async (req: Request, res: Response) => {
 
 export const getOngByName = async (req: Request, res: Response) => {
     try {
-        const { nome } = req.params
-        const ongs = Ong.findAll({
+        const nome = req.params.nome
+        const ongs = await Ong.findAll({
             where: {
                 nome: {
                     [Op.iLike]: `%${nome}%`
@@ -50,12 +50,9 @@ export const getOngByName = async (req: Request, res: Response) => {
             },
             attributes: {
                 exclude: ['id', 'senha']
-            },
-            order: ['nome']
+            }
         })
-
-        return res.status(200).json(ongs)
-
+        res.status(200).json(ongs)
     } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }

@@ -1,14 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { userRoute } from './src/routes/user';
-import { empresaRoute } from './src/routes/empresa';
+import cors from 'cors'
+import { userRoute } from './routes/user';
+import { empresaRoute } from './routes/empresa';
 import passport from 'passport';
 import path from 'path';
-import { ongRoute } from './src/routes/ong';
+import { ongRoute } from './routes/ong';
 import bodyParser from 'body-parser';
-import { login } from './src/auth/login';
-import { enderecoRoute } from './src/routes/endereco';
-import { vagaRoute } from './src/routes/vaga';
+import { login } from './auth/login';
+import { enderecoRoute } from './routes/endereco';
+import { vagaRoute } from './routes/vaga';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(bodyParser.json())
 app.use(express.json())
+app.use(cors());
 
 app.post('/login/:tipo', login)
 app.use(userRoute)

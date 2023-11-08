@@ -1,4 +1,4 @@
-import { Model, DataTypes, MediumIntegerDataType } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../db/pg";
 
 export interface VagaUsuarioInstance extends Model {
