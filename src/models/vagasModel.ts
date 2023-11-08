@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../db/pg";
 import { User } from "./userModel";
 import { Ong } from "./ongModel";
-import { VagaUsuario } from "./vagaUsuario";
+import { VagaUsuario } from "./vagaUsuarioModel";
 
 export interface VagaInstance extends Model {
     id: number;
@@ -12,7 +12,8 @@ export interface VagaInstance extends Model {
     cadastro: Date;
     qtd_vagas: number;
     causa_id: number;
-    ong_id: number
+    ong_id: number;
+    qtd_volun: number
 }
 
 export const Vaga = sequelize.define<VagaInstance>("Vagas", {
@@ -45,6 +46,9 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
         type: DataTypes.INTEGER,
         references: { model: 'ongs', key: 'id' },
         onDelete: 'CASCADE'
+    },
+    qtd_volun: {
+        type: DataTypes.INTEGER
     }
 },
 {
