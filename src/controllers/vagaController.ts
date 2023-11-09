@@ -103,7 +103,7 @@ export const listarVagasOng = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
-}
+} 
 
 export const listarVagas = async (req: Request, res: Response) => {
     try {
