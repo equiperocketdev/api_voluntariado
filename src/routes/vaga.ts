@@ -5,6 +5,7 @@ import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagasOng } from '../
 export const vagaRoute = express();
 
 vagaRoute.get('/vagas/:causa', filtrarVagas)
+vagaRoute.get('/vagas', listarVagasOng)
 vagaRoute.get('/vagas/pesquisar/:nome', listarVagasOng)
 
 vagaRoute.post('/vagas/cadastrar', verifyToken, cadastrarVaga)

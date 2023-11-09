@@ -103,4 +103,14 @@ export const listarVagasOng = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
+} 
+
+export const listarVagas = async (req: Request, res: Response) => {
+    try {
+        const vagas = await Vaga.findAll()
+
+        return res.status(200).json(vagas)
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
 }
