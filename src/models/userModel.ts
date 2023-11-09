@@ -11,7 +11,8 @@ export interface UserInstance extends Model {
     telefone: string;
     cadastro: Date | string;
     empresa_id: number | null;
-    data_nasc: Date | string
+    data_nasc: Date | string,
+    avatar: string | null
 }
 export const User = sequelize.define<UserInstance>("User", {
     id: {
@@ -43,6 +44,9 @@ export const User = sequelize.define<UserInstance>("User", {
     },
     data_nasc: {
         type: DataTypes.DATE
+    },
+    avatar: {
+        type: DataTypes.STRING
     }
 },
 {
