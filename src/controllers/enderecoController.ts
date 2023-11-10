@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Endereco } from '../models/enderecoModel'
-import { jwtDecode } from 'jwt-decode'
-import { JwtPayload } from 'jsonwebtoken'
+import { isUsuario, isEmpresa, isOng} from '../auth/verifyType'
 
 export const cadastrarEndereco = async (req: Request, res: Response) => {
     const { cep, rua, bairro, cidade, estado } = req.body
@@ -17,19 +16,11 @@ export const cadastrarEndereco = async (req: Request, res: Response) => {
         return res.status(400).json("Digite todos os dados!")
     }
 
-    try {
-        const [_bearer, token] = authorization.split(' ')
-        const decoded = jwtDecode<JwtPayload>(token)
-        const { tipo } = decoded
+    if(isUsuario(id)) usuario_id = id
+    if(isEmpresa(id)) empresa_id = id
+    if(isOng(id)) ong_id = id
 
-        if(tipo == 'user'){
-            usuario_id = id
-        } else if(tipo == 'empresa'){
-            empresa_id = id
-        } else if(tipo == 'ong'){
-            ong_id = id
-        }
-        
+    try {
         const endereco = await Endereco.create({
             cep,
             rua,

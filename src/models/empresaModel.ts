@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../db/pg";
+import { Vaga } from "./vagasModel";
 
 export interface EmpresaInstance extends Model {
     id: number;
@@ -9,6 +10,7 @@ export interface EmpresaInstance extends Model {
     senha: string;
     cadastro: Date | string;
     sobre: string
+    logo: string;
 }
 
 export const Empresa = sequelize.define<EmpresaInstance>("Empresa", {
@@ -35,6 +37,9 @@ export const Empresa = sequelize.define<EmpresaInstance>("Empresa", {
     },
     sobre: {
         type: DataTypes.STRING
+    },
+    logo: {
+        type: DataTypes.STRING
     }
 },
 {
@@ -42,3 +47,4 @@ export const Empresa = sequelize.define<EmpresaInstance>("Empresa", {
     freezeTableName: false, 
     timestamps: false
 });
+

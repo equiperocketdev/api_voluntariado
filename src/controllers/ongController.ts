@@ -57,3 +57,35 @@ export const getOngByName = async (req: Request, res: Response) => {
         res.status(400).json("Deu ruim: " + error)
     }
 }
+
+export const atualizarOng = async (req: Request, res: Response) => {
+    const { cnpj, nome, email, sobre  } = req.body
+    const id = req.user
+
+    const ong = { cnpj, nome, email, sobre }
+    
+    try {
+        await Ong.update(ong, {
+            where: { id }
+        })
+        return res.status(201).send()        
+    }
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const deletarOng = async (req: Request, res: Response) => {
+    try {
+        const id = req.user
+        const ong = await Ong.findOne({ where: { id } })
+    
+        if(ong){
+            await ong.destroy()
+            return res.status(200).send()
+        }
+    } 
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}

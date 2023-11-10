@@ -1,6 +1,7 @@
 import express from 'express';
-import { verifyToken } from '../auth/verifyToken';
-import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng } from '../controllers/vagaController';
+import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa } 
+from '../controllers/vagaController';
+import { verifyToken } from '../config/passport';
 
 export const vagaRoute = express();
 
@@ -10,3 +11,5 @@ vagaRoute.get('/vagas/pesquisar/:nome', listarVagasOng)
 
 vagaRoute.post('/vagas/cadastrar', verifyToken, cadastrarVaga)
 vagaRoute.post('/vagas/inscricao/:vaga_id', verifyToken, fazerInscricao)
+
+vagaRoute.post('/vagas/associar/:vaga_id', verifyToken, associarEmpresa)

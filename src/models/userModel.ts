@@ -1,7 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../db/pg";
 import { Empresa } from '../models/empresaModel'
-import { Endereco } from "./enderecoModel";
 
 export interface UserInstance extends Model {
     id: number;
@@ -9,6 +8,7 @@ export interface UserInstance extends Model {
     email: string;
     senha: string;
     telefone: string;
+    tempo_volun: number;
     cadastro: Date | string;
     empresa_id: number | null;
     data_nasc: Date | string,
@@ -32,6 +32,9 @@ export const User = sequelize.define<UserInstance>("User", {
     },
     telefone: {
         type: DataTypes.STRING
+    },
+    tempo_volun: {
+        type: DataTypes.INTEGER
     },
     cadastro: {
         type: DataTypes.DATE
