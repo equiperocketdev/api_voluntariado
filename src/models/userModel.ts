@@ -5,6 +5,7 @@ import { Empresa } from '../models/empresaModel'
 export interface UserInstance extends Model {
     id: number;
     nome: string;
+    sobrenome: string;
     email: string;
     senha: string;
     telefone: string;
@@ -21,6 +22,9 @@ export const User = sequelize.define<UserInstance>("User", {
         type: DataTypes.INTEGER        
     },
     nome: {
+        type: DataTypes.STRING
+    },
+    sobrenome: {
         type: DataTypes.STRING
     },
     email: {

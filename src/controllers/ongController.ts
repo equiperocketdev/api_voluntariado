@@ -7,7 +7,7 @@ export const listarOngs = async (req: Request, res: Response) => {
     try {
         const ongs = await Ong.findAll({
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             order: ['nome']
         })
@@ -49,7 +49,7 @@ export const getOngByName = async (req: Request, res: Response) => {
                 }
             },
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             }
         })
         res.status(200).json(ongs)
@@ -86,6 +86,25 @@ export const deletarOng = async (req: Request, res: Response) => {
         }
     } 
     catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const adicionarLogoOng = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        if(req.file){
+            const logo = req.file.filename
+            const arquivo = { logo }
+
+            await Ong.update(arquivo, {
+                where: { id }
+            })
+        }
+
+        return res.status(201).send()
+    } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
 }

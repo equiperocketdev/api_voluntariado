@@ -10,7 +10,7 @@ export const listarEmpresas = async (req: Request, res: Response) => {
     try {
         const empresas = await Empresa.findAll({
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             include: [{
                 model: User,
@@ -36,7 +36,7 @@ export const getEmpresaByName = async (req: Request, res: Response) => {
                 }
             },
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             order: ['nome']
         })
@@ -56,7 +56,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
                 attributes: ['nome']
             }],
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             }
         })
 
@@ -133,7 +133,12 @@ export const infoEmpresa = async (req: Request, res: Response) => {
     const id = req.user
 
     try {
-        const empresa = await Empresa.findOne({ where: { id }});
+        const empresa = await Empresa.findOne({ 
+            where: { id },
+            attributes: {
+                exclude: ['senha']
+            }
+        });
 
         return res.status(200).json(empresa)
     } 
@@ -161,5 +166,24 @@ export const listarVagasEmpresa = async (req: Request, res: Response) => {
         
     } catch (error) {
         res.status(400).json({message: error})
+    }
+}
+
+export const adicionarLogo = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        if(req.file){
+            const logo = req.file.filename
+            const arquivo = { logo }
+
+            await Empresa.update(arquivo, {
+                where: { id }
+            })
+        }
+
+        return res.status(201).send()
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
     }
 }
