@@ -1,16 +1,19 @@
 import express from 'express';
-import { cadastrarUsuario, deletarUsuario, listarUsuarios, getUserById, getUserByName, atualizarUsuario, perfil, adicionarAvatar } 
-from '../controllers/userController';
-import { verifyTokenUser } from '../config/passport';
+import { cadastrarUsuario, deletarUsuario, listarUsuarios, getUserById, getUserByName, atualizarUsuario, perfil, adicionarAvatar } from '../controllers/userController';
+import { verifyToken } from '../config/passport';
 import multer from 'multer';
+import crypto from 'crypto'
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, './images/avatar')
+        cb(null, './images')
     },
     filename: (req, file, cb) => {
-        const id = req.user
-        cb(null, id + '_' + file.fieldname + '.jpg')
+        crypto.randomBytes(8, (err, hash) =>{
+            const fileName = `${hash.toString('hex')}-avatar.jpg`;
+
+            cb(null, fileName)
+        })
     }
 })
 const upload = multer({
@@ -24,14 +27,16 @@ const upload = multer({
 
 export const userRoute = express();
 
+userRoute.use('/file', express.static('images'))
+
 userRoute.get('/usuarios', listarUsuarios)
 userRoute.get('/usuarios/id/:id', getUserById)
 userRoute.get('/usuarios/buscar/:nome', getUserByName)
 
 userRoute.post('/usuarios/cadastrar', cadastrarUsuario)
-userRoute.put('/usuarios/atualizar',verifyTokenUser, atualizarUsuario)
-userRoute.delete('/usuarios/deletar',verifyTokenUser, deletarUsuario)
+userRoute.put('/usuarios/atualizar',verifyToken, atualizarUsuario)
+userRoute.delete('/usuarios/deletar',verifyToken, deletarUsuario)
 
-userRoute.get('/usuarios/perfil', verifyTokenUser, perfil)
+userRoute.get('/usuarios/perfil', verifyToken, perfil)
 
-userRoute.post('/usuarios/avatar', verifyTokenUser, upload.single('avatar'), adicionarAvatar)
+userRoute.post('/usuarios/avatar', verifyToken, upload.single('avatar'), adicionarAvatar)

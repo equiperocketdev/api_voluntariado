@@ -15,11 +15,13 @@ export const VagaUsuario = sequelize.define<VagaUsuarioInstance>("vaga_usuario",
     },
     vaga_id: {
         type: DataTypes.INTEGER,
-        references: { model: 'vagas', key: 'id' }
+        references: { model: 'vagas', key: 'id' },
+        onDelete: 'CASCADE'
     },
     usuario_id: {
         type: DataTypes.INTEGER,
-        references: { model: 'usuarios', key: 'id' }
+        references: { model: 'usuarios', key: 'id' },
+        onDelete: 'CASCADE'
     }
 },
 {

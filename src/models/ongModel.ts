@@ -8,7 +8,8 @@ export interface OngInstance extends Model {
     email: string;
     senha: string;
     cadastro: Date | string;
-    sobre: string
+    sobre: string;
+    logo: string;
 }
 
 export const Ong = sequelize.define<OngInstance>("Ong", {
@@ -34,6 +35,9 @@ export const Ong = sequelize.define<OngInstance>("Ong", {
         type: DataTypes.DATE
     },
     sobre: {
+        type: DataTypes.STRING
+    },
+    logo: {
         type: DataTypes.STRING
     }
 },
