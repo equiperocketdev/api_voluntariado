@@ -14,10 +14,14 @@ export interface VagaInstance extends Model {
     qtd_vagas: number;
     qtd_volun: number;
     capa: string;
-    disponivel: boolean;
     empresa_id: number;
     causa_id: number;
     ong_id: number;
+    cep: string;
+    rua: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
 }
 
 export const Vaga = sequelize.define<VagaInstance>("Vagas", {
@@ -44,9 +48,6 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
     qtd_vagas: {
         type: DataTypes.INTEGER
     },
-    disponivel: {
-        type: DataTypes.BOOLEAN
-    },
     empresa_id: {
         type: DataTypes.INTEGER
     },
@@ -59,6 +60,21 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
         type: DataTypes.INTEGER,
         references: { model: 'ongs', key: 'id' },
         onDelete: 'CASCADE'
+    },
+    cep: {
+        type: DataTypes.STRING
+    },
+    rua: {
+        type: DataTypes.STRING
+    },
+    bairro: {
+        type: DataTypes.STRING
+    },
+    cidade: {
+        type: DataTypes.STRING
+    },
+    estado: {
+        type: DataTypes.STRING
     },
     qtd_volun: {
         type: DataTypes.INTEGER

@@ -11,7 +11,7 @@ export interface UserInstance extends Model {
     telefone: string;
     tempo_volun: number;
     cadastro: Date | string;
-    empresa_id: number | null;
+    empresa_id: number;
     data_nasc: Date | string,
     avatar: string | null
 }

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors'
 import { userRoute } from './routes/user';
@@ -17,10 +17,11 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
+
 app.use(passport.initialize());
 app.use(bodyParser.json())
 app.use(express.json())
-app.use(cors());
 
 app.use(userRoute)
 app.use(empresaRoute)

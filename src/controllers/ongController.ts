@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Op } from 'sequelize'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Ong, OngInstance } from '../models/ongModel'
+import { Endereco } from '../models/enderecoModel'
 
 export const listarOngs = async (req: Request, res: Response) => {
     try {
@@ -50,7 +51,10 @@ export const getOngByName = async (req: Request, res: Response) => {
             },
             attributes: {
                 exclude: ['senha']
-            }
+            },
+            include: [{
+                model: Endereco
+            }]
         })
         res.status(200).json(ongs)
     } catch (error) {

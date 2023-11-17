@@ -52,6 +52,26 @@ export const getUserByName = async (req: Request, res: Response) => {
     }
 }
 
+export const getUserByEmail = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params
+
+        const user = await User.findOne({
+            where: { email },
+            attributes: { exclude: ['senha']}
+        })
+
+        if (!user) {
+            return res.status(404).json("Usuário não encontrado!")
+        }
+
+        return res.status(200).json(user)
+    }
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
 export const getUserById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
@@ -78,7 +98,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const cadastrarUsuario = async (req: Request, res: Response) => {
     const { nome, sobrenome, email, senha, telefone, data_nasc, empresa_id } = req.body
 
-    if (!nome || !sobrenome || !email || !senha || !telefone || !data_nasc) {
+    if (!nome || !sobrenome || !email || !senha || !empresa_id) {
         return res.status(400).json("Digite todos os dados!")
     }
 

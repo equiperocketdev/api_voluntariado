@@ -2,16 +2,18 @@ import { Request, Response } from 'express'
 import { Vaga } from '../models/vagasModel'
 import { Causa } from '../models/causaModel'
 import { VagaUsuario } from '../models/vagaUsuarioModel'
-import { Op, or } from 'sequelize'
+import { Op } from 'sequelize'
 import { Ong } from '../models/ongModel'
 import { User } from '../models/userModel'
 import { Empresa } from '../models/empresaModel'
+import { Endereco } from '../models/enderecoModel'
 
 export const cadastrarVaga = async (req: Request, res: Response) => {
-    const { titulo, sobre, data, qtd_vagas, causa_id, disponivel } = req.body
+    const { titulo, sobre, data, qtd_vagas, causa_id, capa, cep, rua, bairro, cidade, estado } = req.body
     const id = req.user
 
-    if(!titulo || !sobre || !data || !qtd_vagas || !causa_id){
+    if(!titulo || !sobre || !data || !qtd_vagas || !causa_id ||
+        !cep || !rua || !bairro || !cidade || !estado){
         return res.status(400).json("Digite todos os dados!")
     }
 
@@ -24,10 +26,15 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 titulo,
                 sobre,
                 data,
-                qtd_vagas,
+                qtd_vagas: parseInt(qtd_vagas),
                 causa_id,
-                disponivel,
-                ong_id: id
+                ong_id: id,
+                capa,
+                cep,
+                rua,
+                bairro,
+                cidade,
+                estado
             });
             return res.status(201).send()
         } else if(empresa){
@@ -37,8 +44,13 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 data,
                 qtd_vagas,
                 causa_id,
-                disponivel,
-                empresa_id: id
+                empresa_id: id,
+                capa,
+                cep,
+                rua,
+                bairro,
+                cidade,
+                estado
             });
             return res.status(201).send()
         }
@@ -65,7 +77,7 @@ export const adicionarCapa = async (req: Request, res: Response) => {
 
         return res.status(201).send()
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(300).json("Deu ruim: " + error)
     }
 }
 
@@ -78,7 +90,7 @@ export const associarEmpresa = async (req: Request, res: Response) => {
         const vaga = await Vaga.findOne({ where: { id: vaga_id }})
 
         if(vaga){
-            const updateVaga = { disponivel: false, empresa_id }
+            const updateVaga = { empresa_id }
 
             await Vaga.update(updateVaga, {
                 where: { id: vaga_id }
@@ -167,7 +179,16 @@ export const listarVagasOng = async (req: Request, res: Response) => {
 
 export const listarVagas = async (req: Request, res: Response) => {
     try {
-        const vagas = await Vaga.findAll()
+        const vagas = await Vaga.findAll({
+            include: [{
+                model: Ong,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            },
+            {
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            }]
+        })
 
         return res.status(200).json(vagas)
         
