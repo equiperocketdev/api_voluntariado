@@ -1,6 +1,6 @@
 import express from 'express';
-import { verifyToken } from '../auth/verifyToken'
 import { cadastrarEndereco } from '../controllers/enderecoController';
+import { verifyToken } from '../config/passport'
 
 export const enderecoRoute = express();
 

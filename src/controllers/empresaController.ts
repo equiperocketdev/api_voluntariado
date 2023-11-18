@@ -3,14 +3,14 @@ import { Op } from 'sequelize'
 import { Empresa } from '../models/empresaModel'
 import { criptografarSenha } from '../auth/bcrypt'
 import { User } from '../models/userModel'
-import JWT, { JwtPayload } from 'jsonwebtoken'
-import { jwtDecode } from "jwt-decode";
+import { isEmpresa } from '../auth/verifyType'
+import { Vaga } from '../models/vagasModel'
 
 export const listarEmpresas = async (req: Request, res: Response) => {
     try {
         const empresas = await Empresa.findAll({
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             include: [{
                 model: User,
@@ -22,7 +22,7 @@ export const listarEmpresas = async (req: Request, res: Response) => {
         return res.status(200).json(empresas)
 
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json({message: error})
     }
 }
 
@@ -36,14 +36,14 @@ export const getEmpresaByName = async (req: Request, res: Response) => {
                 }
             },
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             order: ['nome']
         })
         return res.status(200).json(empresas)
 
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json({message: error})
     }
 }
 
@@ -56,7 +56,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
                 attributes: ['nome']
             }],
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             }
         })
 
@@ -67,7 +67,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
         return res.status(404).json("Empresa não encontrada")
 
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json({message: error})
     }
 }
 
@@ -89,10 +89,11 @@ export const cadastrarEmpresa = async (req: Request, res: Response) => {
             senha: await criptografarSenha(senha),
             sobre
         })
+        
         return res.status(201).send()
 
     } catch (error) {
-        res.json("Deu ruim: " + error)
+        res.json("Mensagem: " + error)
     }
 }
 
@@ -109,7 +110,7 @@ export const atualizarEmpresa = async (req: Request, res: Response) => {
         return res.status(201).send()        
     }
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json({message: error})
     }
 }
 
@@ -124,7 +125,7 @@ export const deletarEmpresa = async (req: Request, res: Response) => {
         }
     } 
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json({message: error})
     }
 }
 
@@ -132,11 +133,57 @@ export const infoEmpresa = async (req: Request, res: Response) => {
     const id = req.user
 
     try {
-        const empresa = await Empresa.findOne({ where: { id }});
+        const empresa = await Empresa.findOne({ 
+            where: { id },
+            attributes: {
+                exclude: ['senha']
+            }
+        });
 
         return res.status(200).json(empresa)
     } 
     catch (error) {
+        res.status(400).json({message: error})
+    }
+}
+
+export const listarVagasEmpresa = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        const vagas = await Empresa.findAll({
+            where: { id },
+            attributes: ['nome'],
+            include: [{
+                model: Vaga,
+                attributes: {
+                    exclude: ['ong_id', 'id', 'causa_id']
+                }
+            }]
+        })
+
+        return res.status(200).json(vagas)
+        
+    } catch (error) {
+        res.status(400).json({message: error})
+    }
+}
+
+export const adicionarLogo = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        if(req.file){
+            const logo = req.file.filename
+            const arquivo = { logo }
+
+            await Empresa.update(arquivo, {
+                where: { id }
+            })
+        }
+
+        return res.status(201).send()
+    } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
 }

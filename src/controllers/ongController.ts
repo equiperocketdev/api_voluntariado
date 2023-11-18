@@ -2,12 +2,13 @@ import { Request, Response } from 'express'
 import { Op } from 'sequelize'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Ong, OngInstance } from '../models/ongModel'
+import { Endereco } from '../models/enderecoModel'
 
 export const listarOngs = async (req: Request, res: Response) => {
     try {
         const ongs = await Ong.findAll({
             attributes: {
-                exclude: ['id', 'senha']
+                exclude: ['senha']
             },
             order: ['nome']
         })
@@ -49,10 +50,64 @@ export const getOngByName = async (req: Request, res: Response) => {
                 }
             },
             attributes: {
-                exclude: ['id', 'senha']
-            }
+                exclude: ['senha']
+            },
+            include: [{
+                model: Endereco
+            }]
         })
         res.status(200).json(ongs)
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const atualizarOng = async (req: Request, res: Response) => {
+    const { cnpj, nome, email, sobre  } = req.body
+    const id = req.user
+
+    const ong = { cnpj, nome, email, sobre }
+    
+    try {
+        await Ong.update(ong, {
+            where: { id }
+        })
+        return res.status(201).send()        
+    }
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const deletarOng = async (req: Request, res: Response) => {
+    try {
+        const id = req.user
+        const ong = await Ong.findOne({ where: { id } })
+    
+        if(ong){
+            await ong.destroy()
+            return res.status(200).send()
+        }
+    } 
+    catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const adicionarLogoOng = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        if(req.file){
+            const logo = req.file.filename
+            const arquivo = { logo }
+
+            await Ong.update(arquivo, {
+                where: { id }
+            })
+        }
+
+        return res.status(201).send()
     } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
