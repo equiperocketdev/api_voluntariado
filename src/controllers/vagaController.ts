@@ -6,7 +6,6 @@ import { Op } from 'sequelize'
 import { Ong } from '../models/ongModel'
 import { User } from '../models/userModel'
 import { Empresa } from '../models/empresaModel'
-import { Endereco } from '../models/enderecoModel'
 
 export const cadastrarVaga = async (req: Request, res: Response) => {
     const { titulo, sobre, data, qtd_vagas, causa_id, capa, cep, rua, bairro, cidade, estado } = req.body
