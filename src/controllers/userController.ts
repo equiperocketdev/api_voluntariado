@@ -78,9 +78,9 @@ export const getUserById = async (req: Request, res: Response) => {
 
         const user = await User.findByPk(id, {
             include: [{
-                model: Empresa, 
+                model: Empresa,
                 attributes: ['nome']
-            }],
+            }, {model: Vaga}],
             attributes: { exclude: ['senha']}
         })
 

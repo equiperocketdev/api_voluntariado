@@ -54,7 +54,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
             include: [{
                 model: User,
                 attributes: ['nome']
-            }],
+            }, {model: Vaga}],
             attributes: {
                 exclude: ['senha']
             }
