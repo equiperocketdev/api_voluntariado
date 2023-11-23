@@ -1,5 +1,5 @@
 import express from 'express';
-import { adicionarLogoOng, atualizarOng, cadastrarOng, getOngByName, listarOngs } from '../controllers/ongController';
+import { adicionarLogoOng, atualizarOng, cadastrarOng, getOngById, getOngByName, listarOngs } from '../controllers/ongController';
 import { verifyToken } from '../config/passport'
 import multer from 'multer';
 import crypto from 'crypto'
@@ -31,6 +31,7 @@ ongRoute.use('/file', express.static('images'))
 
 ongRoute.get('/ongs', listarOngs)
 ongRoute.get('/ongs/buscar/:nome', getOngByName)
+ongRoute.get('/ongs/id/:id', getOngById)
 ongRoute.post('/ongs/cadastrar', cadastrarOng)
 ongRoute.post('/ongs/atualizar', atualizarOng)
 ongRoute.post('/ongs/logo', verifyToken, upload.single('logo'), adicionarLogoOng)

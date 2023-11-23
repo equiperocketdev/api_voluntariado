@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Ong, OngInstance } from '../models/ongModel'
 import { Endereco } from '../models/enderecoModel'
+import { Vaga } from '../models/vagasModel'
 
 export const listarOngs = async (req: Request, res: Response) => {
     try {
@@ -36,6 +37,25 @@ export const cadastrarOng = async (req: Request, res: Response) => {
         res.status(201).send()
     } 
     catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const getOngById = async (req: Request, res: Response) => {
+    const id = req.params.id
+
+    try {
+        const ong = await Ong.findByPk(id, {
+            include: [{
+                model: Vaga
+            }],
+            attributes: {
+                exclude: ['senha']
+            }
+        })
+        
+        return res.status(200).json(ong)
+    } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }
 }

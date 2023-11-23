@@ -131,21 +131,21 @@ export const fazerInscricao = async (req: Request, res: Response) => {
 }
 
 export const filtrarVagas = async (req: Request, res: Response) => {
-    const { causa } = req.params
+    const causa = req.params.causa
 
     try {
-        const vagas = await Causa.findAll({
+        const vagas = await Vaga.findAll({
             where: {
-                nome: { [Op.iLike]: `%${causa}%` }
+                causa_id: causa
             },
-            attributes: {
-                exclude: ['id']
-            },
+            limit: 10,
             include: [{
-                model: Vaga,
-                attributes: {
-                    exclude: ['cadastro', 'causa_id', 'ong_id']
-                }
+                model: Ong,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            },
+            {
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
             }]
         })
 
@@ -199,18 +199,54 @@ export const listarVagas = async (req: Request, res: Response) => {
 export const listarVagasEmpresa = async (req: Request, res: Response) => {
     try {
         const id = req.user
-        const usuario = await User.findOne({ where: { id } })
 
-        if(usuario){
-            const vagas = await Vaga.findAll({
-                where: {
-                    empresa_id: usuario.empresa_id
-                }
-            })
+        const vagas = await Vaga.findAll({
+            where: {
+                empresa_id: id
+            },
+            include: [{
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            }]
+        })
+
+        if(vagas){
             return res.status(200).json(vagas)
         }
     
         return res.status(200).json("Ocorreu algum erro.")        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const listarVagasCidade = async (req: Request, res: Response) => {
+    const id = req.user
+    const { cidade } = req.params
+
+    try {
+        const vagas = await Vaga.findAll({
+            where: {
+                cidade: {
+                    [Op.iLike]: `%${cidade.trim()}%`
+                }
+            }
+        })
+        
+        return res.status(200).json(vagas)
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const getVaga = async (req: Request, res: Response) => {
+    const id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const vaga = await Vaga.findByPk(vaga_id)
+        
+        return res.status(200).json(vaga)
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
