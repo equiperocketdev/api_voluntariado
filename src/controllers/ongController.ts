@@ -82,6 +82,21 @@ export const getOngByName = async (req: Request, res: Response) => {
     }
 }
 
+export const getOngByEamil = async (req: Request, res: Response) => {
+    const { email } = req.params
+
+    try {
+        const ong = await Ong.findOne({
+            where: { email }, 
+            attributes: ['id', 'nome', 'email']
+        })
+        
+        return res.status(200).json(ong)
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
 export const atualizarOng = async (req: Request, res: Response) => {
     const { cnpj, nome, email, sobre  } = req.body
     const id = req.user
