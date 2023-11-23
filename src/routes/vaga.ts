@@ -1,5 +1,5 @@
 import express from 'express';
-import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa } 
+import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa, listarVagasCidade, getVaga } 
 from '../controllers/vagaController';
 import { verifyToken } from '../config/passport';
 import multer from 'multer';
@@ -33,10 +33,14 @@ vagaRoute.use('/file', express.static('images'))
 
 vagaRoute.get('/vagas/:causa', filtrarVagas)
 vagaRoute.get('/vagas', listarVagas)
-vagaRoute.get('/vagas/pesquisar/:nome', listarVagasOng)
+vagaRoute.get('/vagas/ong/:nome', listarVagasOng)
+vagaRoute.get('/vagas/cidade/:cidade', listarVagasCidade)
 vagaRoute.get('/vagas/empresa/listar', verifyToken, listarVagasEmpresa)
+vagaRoute.get('/vagas/info/:vaga_id', getVaga)
+
 vagaRoute.post('/vagas/cadastrar', verifyToken, upload.single('capa'), cadastrarVaga)
 vagaRoute.post('/vagas/capa/:id', verifyToken, upload.single('capa'), adicionarCapa)
 vagaRoute.post('/vagas/inscricao/:vaga_id', verifyToken, fazerInscricao)
 vagaRoute.post('/vagas/associar/:vaga_id', verifyToken, associarEmpresa)
+
 vagaRoute.get('/causas', getCausas)
