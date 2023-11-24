@@ -88,7 +88,7 @@ export const cadastrarEmpresa = async (req: Request, res: Response) => {
         return res.status(201).send()
 
     } catch (error) {
-        res.json("Mensagem: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
