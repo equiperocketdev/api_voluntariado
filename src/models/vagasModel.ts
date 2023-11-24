@@ -4,6 +4,7 @@ import { User } from "./userModel";
 import { Ong } from "./ongModel";
 import { VagaUsuario } from "./vagaUsuarioModel";
 import { Empresa } from "./empresaModel";
+import { VagaEmpresa } from "./vagaEmpresaModel";
 
 export interface VagaInstance extends Model {
     id: number;
@@ -13,15 +14,20 @@ export interface VagaInstance extends Model {
     cadastro: Date;
     qtd_vagas: number;
     qtd_volun: number;
+    duracao: number;
+    impacto: number;
+    politica: string;
     capa: string;
     empresa_id: number;
     causa_id: number;
     ong_id: number;
+    ods_id: number;
     cep: string;
     rua: string;
     bairro: string;
     cidade: string;
     estado: string;
+    disponivel: boolean;
 }
 
 export const Vaga = sequelize.define<VagaInstance>("Vagas", {
@@ -38,6 +44,15 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
     },
     data: {
         type: DataTypes.DATE(6)
+    },
+    duracao: {
+        type: DataTypes.INTEGER
+    },
+    impacto: {
+        type: DataTypes.INTEGER
+    },
+    politica: {
+        type: DataTypes.STRING
     },
     cadastro: {
         type: DataTypes.DATE
@@ -61,6 +76,10 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
         references: { model: 'ongs', key: 'id' },
         onDelete: 'CASCADE'
     },
+    ods_id: {
+        type: DataTypes.INTEGER,
+        references: { model: 'ods', key: 'id' },
+    },
     cep: {
         type: DataTypes.STRING
     },
@@ -78,6 +97,9 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
     },
     qtd_volun: {
         type: DataTypes.INTEGER
+    },
+    disponivel: {
+        type: DataTypes.BOOLEAN
     }
 },
 {
@@ -104,6 +126,21 @@ User.belongsToMany(Vaga, {
 Vaga.belongsToMany(User, {
     through: {
         model: VagaUsuario
+    },
+    foreignKey: 'vaga_id',
+    constraints: true
+})
+
+Empresa.belongsToMany(Vaga, {
+    through: {
+        model: VagaEmpresa
+    },
+    foreignKey: 'empresa_id',
+    constraints: true
+})
+Vaga.belongsToMany(Empresa, {
+    through: {
+        model: VagaEmpresa
     },
     foreignKey: 'vaga_id',
     constraints: true

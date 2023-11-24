@@ -2,16 +2,18 @@ import { Request, Response } from 'express'
 import { Vaga } from '../models/vagasModel'
 import { Causa } from '../models/causaModel'
 import { VagaUsuario } from '../models/vagaUsuarioModel'
+import { VagaEmpresa } from '../models/vagaEmpresaModel'
 import { Op } from 'sequelize'
 import { Ong } from '../models/ongModel'
-import { User } from '../models/userModel'
+import { Ods } from '../models/odsModel'
 import { Empresa } from '../models/empresaModel'
+import { User } from '../models/userModel'
 
 export const cadastrarVaga = async (req: Request, res: Response) => {
-    const { titulo, sobre, data, qtd_vagas, causa_id, capa, cep, rua, bairro, cidade, estado } = req.body
+    const { titulo, sobre, data, qtd_vagas, causa_id, ods_id, duracao, impacto, politica, capa, cep, rua, bairro, cidade, estado, disponivel } = req.body
     const id = req.user
 
-    if(!titulo || !sobre || !data || !qtd_vagas || !causa_id ||
+    if(!titulo || !sobre || !data || !qtd_vagas || !causa_id || !ods_id ||
         !cep || !rua || !bairro || !cidade || !estado){
         return res.status(400).json("Digite todos os dados!")
     }
@@ -25,15 +27,20 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 titulo,
                 sobre,
                 data,
+                duracao,
+                impacto,
+                politica,
                 qtd_vagas: parseInt(qtd_vagas),
                 causa_id,
                 ong_id: id,
+                ods_id,
                 capa,
                 cep,
                 rua,
                 bairro,
                 cidade,
-                estado
+                estado,
+                disponivel
             });
             return res.status(201).send()
         } else if(empresa){
@@ -41,16 +48,25 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 titulo,
                 sobre,
                 data,
+                duracao,
+                impacto,
+                politica,
                 qtd_vagas,
                 causa_id,
                 empresa_id: id,
+                ods_id,
                 capa,
                 cep,
                 rua,
                 bairro,
                 cidade,
-                estado
+                estado,
+                disponivel
             });
+            const associar = await VagaEmpresa.create({
+                empresa_id: id,
+                vaga_id: vaga.id
+            })
             return res.status(201).send()
         }
 
@@ -87,17 +103,50 @@ export const associarEmpresa = async (req: Request, res: Response) => {
 
     try {
         const vaga = await Vaga.findOne({ where: { id: vaga_id }})
+        const associado = await VagaEmpresa.findOne({
+            where: {
+                [Op.and]: [
+                    { empresa_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(associado) return res.status(400).send()
 
         if(vaga){
-            const updateVaga = { empresa_id }
-
-            await Vaga.update(updateVaga, {
-                where: { id: vaga_id }
+            const associar = await VagaEmpresa.create({
+                empresa_id,
+                vaga_id
             })
+
             return res.status(200).send()
         }
-        return res.status(400).send()
     } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const removeAssociacao = async (req: Request, res: Response) => {
+    const empresa_id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const associado = await VagaEmpresa.findOne({
+            where: {
+                [Op.and]: [
+                    { empresa_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(associado){
+            await associado.destroy()
+            return res.status(201).send()
+        }
+        
+        return res.status(400).json("Objeto não deletado.")
+    } 
+    catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
 }
@@ -124,7 +173,6 @@ export const fazerInscricao = async (req: Request, res: Response) => {
         }
 
         return res.status(201).send()
-        
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
@@ -244,10 +292,40 @@ export const getVaga = async (req: Request, res: Response) => {
     const { vaga_id } = req.params
 
     try {
-        const vaga = await Vaga.findByPk(vaga_id)
+        const vaga = await Vaga.findByPk(vaga_id, {
+            include: [
+                { model: Causa }, 
+                { model: Ods },
+                { model: Empresa, attributes: { exclude: ['senha']} },
+                { model: Ong, attributes: { exclude: ['senha']} },
+                { model: User, attributes: { exclude: ['senha']} }
+            ]
+        })
         
         return res.status(200).json(vaga)
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
+}
+
+export const verificaAssociacao = async (req: Request, res: Response) => {
+    const empresa_id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const associado = await VagaEmpresa.findOne({
+            where: {
+                [Op.and]: [
+                    { empresa_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(!associado) return res.send()
+
+        return res.status(200).json(associado)
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+
 }
