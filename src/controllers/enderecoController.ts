@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
-import { Endereco } from '../models/enderecoModel'
+import { Endereco, EnderecoInstance } from '../models/enderecoModel'
 import { isUsuario, isEmpresa, isOng} from '../auth/verifyType'
+import { UserInstance } from '../models/userModel'
+import { Empresa } from '../models/empresaModel'
 
 export const cadastrarEndereco = async (req: Request, res: Response) => {
     const { cep, rua, bairro, cidade, estado } = req.body
@@ -34,6 +36,41 @@ export const cadastrarEndereco = async (req: Request, res: Response) => {
         return res.status(201).send()
         
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const getEndereco = async (req: Request, res: Response) => {
+    const id = req.user
+
+    try {
+        if(isEmpresa(id)){
+            const endereco = await Endereco.findOne({
+                where: {
+                    empresa_id: id
+                }
+            })
+            return res.json(endereco)
+        }
+        else if(isUsuario(id)){
+            const endereco = await Endereco.findOne({
+                where: {
+                    usuario_id: id
+                }
+            })
+            return res.json(endereco)
+        }
+        else if(isOng(id)){
+            const endereco = await Endereco.findOne({
+                where: {
+                    ong_id: id
+                }
+            })
+            return res.json(endereco)
+        }
+
+    return res.status(400).json("Endereço não encontrado")        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
     }
 }

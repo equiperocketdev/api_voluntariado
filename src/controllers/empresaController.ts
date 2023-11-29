@@ -5,6 +5,7 @@ import { criptografarSenha } from '../auth/bcrypt'
 import { User } from '../models/userModel'
 import { isEmpresa } from '../auth/verifyType'
 import { Vaga } from '../models/vagasModel'
+import { Endereco } from "../models/enderecoModel";
 
 export const listarEmpresas = async (req: Request, res: Response) => {
     try {
@@ -49,7 +50,12 @@ export const getEmpresaById = async (req: Request, res: Response) => {
             include: [{
                 model: User,
                 attributes: ['nome']
-            }, {model: Vaga}],
+            }, {
+                model: Vaga
+            },
+            {
+                model: Endereco
+            }],
             attributes: {
                 exclude: ['senha']
             }

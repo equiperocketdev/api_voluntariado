@@ -1,5 +1,5 @@
 import express from 'express';
-import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa, listarVagasCidade, getVaga, verificaAssociacao, removeAssociacao } 
+import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa, listarVagasCidade, getVaga, verificaAssociacao, removeAssociacao, ultimasVagas, listarVagasEmpresaLogada } 
 from '../controllers/vagaController';
 import { verifyToken } from '../config/passport';
 import multer from 'multer';
@@ -36,9 +36,11 @@ vagaRoute.get('/vagas/:causa', filtrarVagas)
 vagaRoute.get('/vagas', listarVagas)
 vagaRoute.get('/vagas/ong/:nome', listarVagasOng)
 vagaRoute.get('/vagas/cidade/:cidade', listarVagasCidade)
-vagaRoute.get('/vagas/empresa/listar', verifyToken, listarVagasEmpresa)
+vagaRoute.get('/vagas/empresa/listar', verifyToken, listarVagasEmpresaLogada)
+vagaRoute.get('/vagas/empresa/vagas/:id', listarVagasEmpresa)
 vagaRoute.get('/vagas/info/:vaga_id', getVaga)
 vagaRoute.get('/vagas/verificar/empresa/:vaga_id', verifyToken, verificaAssociacao)
+vagaRoute.get('/vagas/listar/ultimas', ultimasVagas)
 
 vagaRoute.post('/vagas/cadastrar', verifyToken, upload.single('capa'), cadastrarVaga)
 vagaRoute.post('/vagas/capa/:id', verifyToken, upload.single('capa'), adicionarCapa)
