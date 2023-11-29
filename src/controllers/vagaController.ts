@@ -227,6 +227,7 @@ export const listarVagasOng = async (req: Request, res: Response) => {
 export const listarVagas = async (req: Request, res: Response) => {
     try {
         const vagas = await Vaga.findAll({
+            limit: 20,
             include: [{
                 model: Ong,
                 attributes: ['id', 'nome', 'email', 'logo', 'sobre']
@@ -244,9 +245,33 @@ export const listarVagas = async (req: Request, res: Response) => {
     }
 }
 
-export const listarVagasEmpresa = async (req: Request, res: Response) => {
+export const listarVagasEmpresaLogada = async (req: Request, res: Response) => {
     try {
         const id = req.user
+
+        const vagas = await Vaga.findAll({
+            where: {
+                empresa_id: id
+            },
+            include: [{
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            }]
+        })
+
+        if(vagas){
+            return res.status(200).json(vagas)
+        }
+    
+        return res.status(200).json("Ocorreu algum erro.")        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const listarVagasEmpresa = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
 
         const vagas = await Vaga.findAll({
             where: {
@@ -327,5 +352,25 @@ export const verificaAssociacao = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
+}
 
+export const ultimasVagas = async (req: Request, res: Response) => {
+    try {
+        const vagas = await Vaga.findAll({
+            limit: 10,
+            include: [{
+                model: Ong,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            },
+            {
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            }]
+        })
+
+        return res.json(vagas)
+        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
 }
