@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import { enderecoRoute } from './routes/endereco';
 import { vagaRoute } from './routes/vaga';
 import { loginRoute } from './routes/login';
+import { relatoriosRoute } from './routes/relatorios';
 
 dotenv.config();
 
@@ -29,5 +30,6 @@ app.use(ongRoute)
 app.use(enderecoRoute)
 app.use(vagaRoute)
 app.use(loginRoute)
+app.use(relatoriosRoute)
 
 app.listen(process.env.PORT || 3000)

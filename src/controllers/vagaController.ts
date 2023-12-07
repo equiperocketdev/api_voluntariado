@@ -178,6 +178,31 @@ export const fazerInscricao = async (req: Request, res: Response) => {
     }
 }
 
+export const removerInscricao = async (req: Request, res: Response) => {
+    const usuario_id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const inscricao = await VagaUsuario.findOne({
+            where: {
+                [Op.and]: [
+                    { usuario_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(inscricao){
+            await inscricao.destroy()
+            return res.status(201).send()
+        }
+        
+        return res.status(400).json("Objeto não deletado.")
+        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
 export const filtrarVagas = async (req: Request, res: Response) => {
     const causa = req.params.causa
 
@@ -349,6 +374,27 @@ export const verificaAssociacao = async (req: Request, res: Response) => {
         if(!associado) return res.send()
 
         return res.status(200).json(associado)
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const verificaInscricao = async (req: Request, res: Response) => {
+    const usuario_id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const inscrito = await VagaUsuario.findOne({
+            where: {
+                [Op.and]: [
+                    { usuario_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(!inscrito) return res.send()
+
+        return res.status(200).json(inscrito)
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }

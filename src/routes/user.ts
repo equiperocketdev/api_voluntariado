@@ -1,5 +1,5 @@
 import express from 'express';
-import { cadastrarUsuario, deletarUsuario, listarUsuarios, getUserById, getUserByName, atualizarUsuario, perfil, adicionarAvatar, getUserByEmail } from '../controllers/userController';
+import { cadastrarUsuario, deletarUsuario, listarUsuariosEmpresa, getUserById, getUserByName, atualizarUsuario, perfil, adicionarAvatar, getUserByEmail } from '../controllers/userController';
 import { verifyToken } from '../config/passport';
 import multer from 'multer';
 import crypto from 'crypto'
@@ -29,7 +29,7 @@ export const userRoute = express();
 
 userRoute.use('/file', express.static('images'))
 
-userRoute.get('/usuarios', listarUsuarios)
+userRoute.get('/usuarios', verifyToken, listarUsuariosEmpresa)
 userRoute.get('/usuarios/id/:id', getUserById)
 userRoute.get('/usuarios/email/:email', getUserByEmail)
 userRoute.get('/usuarios/buscar/:nome', getUserByName)
