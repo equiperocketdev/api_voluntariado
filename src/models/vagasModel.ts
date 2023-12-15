@@ -28,6 +28,7 @@ export interface VagaInstance extends Model {
     cidade: string;
     estado: string;
     disponivel: boolean;
+    finalizada: boolean;
 }
 
 export const Vaga = sequelize.define<VagaInstance>("Vagas", {
@@ -99,6 +100,9 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
         type: DataTypes.INTEGER
     },
     disponivel: {
+        type: DataTypes.BOOLEAN
+    },
+    finalizada: {
         type: DataTypes.BOOLEAN
     }
 },

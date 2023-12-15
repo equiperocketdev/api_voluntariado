@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Vaga } from '../models/vagasModel'
+import { Vaga, VagaInstance } from '../models/vagasModel'
 import { Causa } from '../models/causaModel'
 import { VagaUsuario } from '../models/vagaUsuarioModel'
 import { VagaEmpresa } from '../models/vagaEmpresaModel'
@@ -193,7 +193,19 @@ export const removerInscricao = async (req: Request, res: Response) => {
         })
         if(inscricao){
             await inscricao.destroy()
-            return res.status(201).send()
+            const vaga = await Vaga.findByPk(vaga_id);
+
+            if(vaga){
+                const qtdInscritos = vaga.qtd_volun
+                const qtd_volun = qtdInscritos - 1
+                const updateVaga = { qtd_volun }
+    
+                await Vaga.update(updateVaga, {
+                    where: { id: vaga_id }
+                })
+            }
+
+            return res.status(201).send()            
         }
         
         return res.status(400).json("Objeto não deletado.")
@@ -271,22 +283,14 @@ export const listarVagas = async (req: Request, res: Response) => {
 }
 
 export const listarVagasEmpresaLogada = async (req: Request, res: Response) => {
+    const empresa_id = req.user
+
     try {
-        const id = req.user
-
-        const vagas = await Vaga.findAll({
+        const vagas = await VagaEmpresa.findAll({
             where: {
-                empresa_id: id
-            },
-            include: [{
-                model: Empresa,
-                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
-            }]
+                empresa_id
+            }
         })
-
-        if(vagas){
-            return res.status(200).json(vagas)
-        }
     
         return res.status(200).json("Ocorreu algum erro.")        
     } catch (error) {
@@ -295,9 +299,9 @@ export const listarVagasEmpresaLogada = async (req: Request, res: Response) => {
 }
 
 export const listarVagasEmpresa = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
+    const { id } = req.params
 
+    try {
         const vagas = await Vaga.findAll({
             where: {
                 empresa_id: id
@@ -307,6 +311,28 @@ export const listarVagasEmpresa = async (req: Request, res: Response) => {
                 attributes: ['id', 'nome', 'email', 'logo', 'sobre']
             }]
         })
+
+        const vagasAssociadas = await VagaEmpresa.findAll({
+            where: {
+                empresa_id: id
+            }
+        })
+        for(let i = 0; i < vagasAssociadas.length; i++) {
+            const vaga = await Vaga.findOne({
+                where: {
+                    id: vagasAssociadas[i].vaga_id
+                },
+                include: [{
+                    model: Empresa,
+                    attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+                },
+            {
+                model: Ong,
+                attributes: ['nome']
+            }]
+            })
+            if(vaga) vagas.push(vaga)
+        }
 
         if(vagas){
             return res.status(200).json(vagas)
@@ -348,7 +374,7 @@ export const getVaga = async (req: Request, res: Response) => {
                 { model: Ods },
                 { model: Empresa, attributes: { exclude: ['senha']} },
                 { model: Ong, attributes: { exclude: ['senha']} },
-                { model: User, attributes: { exclude: ['senha']} }
+                { model: User, attributes: ['id', 'nome', 'email', 'empresa_id']}
             ]
         })
         
@@ -415,6 +441,60 @@ export const ultimasVagas = async (req: Request, res: Response) => {
         })
 
         return res.json(vagas)
+        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const finalizarVaga = async (req: Request, res: Response) => {
+    const id = req.user
+    const { vaga_id } = req.params
+
+    try {
+        const vaga = await Vaga.findByPk(vaga_id)
+
+        if(vaga){
+            if(vaga.empresa_id == id || vaga.ong_id == id){ 
+                await vaga.update({ finalizada: true })
+            }
+        }
+
+        return res.send()
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const listarVoluntarios = async (req: Request, res: Response) => {
+    const { vaga_id } = req.params
+
+    try {
+        const vaga = await Vaga.findByPk(vaga_id, {
+            include: [
+                { model: User, attributes: ['id', 'nome', 'sobrenome', 'email', 'empresa_id']}
+            ],
+            attributes: {
+                exclude: ['id', 'titulo', 'sobre', 'data', 'duracao', 'impacto', 'politica', 'cadastro', 'qtd_vagas', 'empresa_id', 'ong_id', 'ods_id', 'capa', 'causa_id', 'cep', 'rua', 'bairro', 'cidade', 'estado', 'qtd_volun', 'disponivel', 'finalizada']
+            }
+        })
+
+        return res.json(vaga)
+        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const marcarPresenca = async (req: Request, res: Response) => {
+    const { usuario_id } = req.params
+    const { tempo } = req.body
+
+    try {
+        const voluntario = await User.findByPk(usuario_id)
+        if(voluntario){
+            await voluntario.update({ tempo_volun: voluntario.tempo_volun + tempo })
+        } 
         
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
