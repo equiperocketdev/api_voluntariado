@@ -3,7 +3,7 @@ import { Vaga, VagaInstance } from '../models/vagasModel'
 import { Causa } from '../models/causaModel'
 import { VagaUsuario } from '../models/vagaUsuarioModel'
 import { VagaEmpresa } from '../models/vagaEmpresaModel'
-import { Op } from 'sequelize'
+import { Op, where } from 'sequelize'
 import { Ong } from '../models/ongModel'
 import { Ods } from '../models/odsModel'
 import { Empresa } from '../models/empresaModel'
@@ -77,6 +77,32 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
     }
 }
 
+export const editarVaga = async (req: Request, res: Response) => {
+    const id = req.user
+    const { titulo, sobre, qtd_vagas, disponivel } = req.body
+    const { vaga_id } = req.params
+
+    try {
+        const vaga = await Vaga.findOne({ where : { id: vaga_id }})
+        if(vaga?.ong_id == id || vaga?.empresa_id == id){
+            Vaga.update({
+                titulo,
+                sobre,
+                qtd_vagas: parseInt(qtd_vagas),
+                disponivel
+            },{
+                where: { id: vaga_id }
+            })
+            
+            return res.status(204).send()
+        } else {
+            return res.status(404).json("Somente o proprietário tem permissão!")
+        }
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
 export const adicionarCapa = async (req: Request, res: Response) => {
     const { id } = req.params
 
@@ -92,7 +118,7 @@ export const adicionarCapa = async (req: Request, res: Response) => {
 
         return res.status(201).send()
     } catch (error) {
-        res.status(300).json("Deu ruim: " + error)
+        res.status(300).json("Mensagem: " + error)
     }
 }
 
@@ -300,6 +326,7 @@ export const listarVagasEmpresaLogada = async (req: Request, res: Response) => {
 
 export const listarVagasEmpresa = async (req: Request, res: Response) => {
     const { id } = req.params
+    const setVagas = new Set()
 
     try {
         const vagas = await Vaga.findAll({
@@ -326,19 +353,53 @@ export const listarVagasEmpresa = async (req: Request, res: Response) => {
                     model: Empresa,
                     attributes: ['id', 'nome', 'email', 'logo', 'sobre']
                 },
-            {
-                model: Ong,
-                attributes: ['nome']
-            }]
+                {
+                    model: Ong,
+                    attributes: ['nome']
+                }]
             })
             if(vaga) vagas.push(vaga)
         }
 
+        const vagaSemDuplicadas = vagas.filter((vaga) => {
+            const duplicado = setVagas.has(vaga.id)
+            setVagas.add(vaga.id)
+            return !duplicado
+        })
+
         if(vagas){
-            return res.status(200).json(vagas)
+            return res.status(200).json(vagaSemDuplicadas)
         }
     
         return res.status(200).json("Ocorreu algum erro.")        
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const vagasLocal = async (req: Request, res: Response) => {
+    const id = req.user
+    const { bairro, estado } = req.params
+
+    try {
+        const vagas = await Vaga.findAll({
+            where: {
+                [Op.and]: [
+                    {bairro: {[Op.iLike]: `%${bairro}%`}},
+                    {estado: {[Op.iLike]: `%${estado}%`}}
+                ]
+            },
+            include: [{
+                model: Empresa,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            },
+            {
+                model: Ong,
+                attributes: ['nome']
+            }]
+        })
+        
+        return res.json(vagas)
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }
@@ -437,10 +498,11 @@ export const ultimasVagas = async (req: Request, res: Response) => {
             {
                 model: Empresa,
                 attributes: ['id', 'nome', 'email', 'logo', 'sobre']
-            }]
+            }],
+            order: ['cadastro']
         })
 
-        return res.json(vagas)
+        return res.json(vagas.reverse())
         
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
@@ -456,7 +518,7 @@ export const finalizarVaga = async (req: Request, res: Response) => {
 
         if(vaga){
             if(vaga.empresa_id == id || vaga.ong_id == id){ 
-                await vaga.update({ finalizada: true })
+                await vaga.update({ finalizada: true, disponivel: false })
             }
         }
 
@@ -496,6 +558,19 @@ export const marcarPresenca = async (req: Request, res: Response) => {
             await voluntario.update({ tempo_volun: voluntario.tempo_volun + tempo })
         } 
         
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const deletarVaga = async (req: Request, res: Response) => {
+    const { id } = req.params
+
+    try {
+        const vaga = await Vaga.findByPk(Number(id))
+        if(vaga) await vaga.destroy()
+
+        return res.status(204).send()
     } catch (error) {
         res.status(400).json("Mensagem: " + error)
     }

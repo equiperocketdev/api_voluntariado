@@ -47,15 +47,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const empresa = await Empresa.findByPk(id, {
-            include: [{
-                model: User,
-                attributes: ['nome']
-            }, {
-                model: Vaga
-            },
-            {
-                model: Endereco
-            }],
+            include: [ { model: Endereco } ],
             attributes: {
                 exclude: ['senha']
             }
