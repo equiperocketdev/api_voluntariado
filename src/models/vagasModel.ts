@@ -139,6 +139,7 @@ Empresa.belongsToMany(Vaga, {
     through: {
         model: VagaEmpresa
     },
+    onDelete: 'CASCADE',
     foreignKey: 'empresa_id',
     constraints: true
 })
@@ -146,6 +147,7 @@ Vaga.belongsToMany(Empresa, {
     through: {
         model: VagaEmpresa
     },
+    onDelete: 'CASCADE',
     foreignKey: 'vaga_id',
     constraints: true
 })
