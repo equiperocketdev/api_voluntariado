@@ -10,7 +10,7 @@ import { Empresa } from '../models/empresaModel'
 import { User } from '../models/userModel'
 
 export const cadastrarVaga = async (req: Request, res: Response) => {
-    const { titulo, sobre, data, qtd_vagas, causa_id, ods_id, duracao, impacto, politica, capa, cep, rua, bairro, cidade, estado, disponivel } = req.body
+    const { titulo, sobre, data, qtd_vagas, causa_id, ods_id, duracao, impacto, politica_id, capa, cep, rua, bairro, cidade, estado, disponivel } = req.body
     const id = req.user
 
     if(!titulo || !sobre || !data || !qtd_vagas || !causa_id || !ods_id ||
@@ -29,7 +29,7 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 data,
                 duracao,
                 impacto,
-                politica,
+                politica_id,
                 qtd_vagas: parseInt(qtd_vagas),
                 causa_id,
                 ong_id: id,
@@ -50,8 +50,8 @@ export const cadastrarVaga = async (req: Request, res: Response) => {
                 data,
                 duracao,
                 impacto,
-                politica,
-                qtd_vagas,
+                politica_id,
+                qtd_vagas: parseInt(qtd_vagas),
                 causa_id,
                 empresa_id: id,
                 ods_id,
@@ -537,7 +537,7 @@ export const listarVoluntarios = async (req: Request, res: Response) => {
                 { model: User, attributes: ['id', 'nome', 'sobrenome', 'email', 'empresa_id']}
             ],
             attributes: {
-                exclude: ['id', 'titulo', 'sobre', 'data', 'duracao', 'impacto', 'politica', 'cadastro', 'qtd_vagas', 'empresa_id', 'ong_id', 'ods_id', 'capa', 'causa_id', 'cep', 'rua', 'bairro', 'cidade', 'estado', 'qtd_volun', 'disponivel', 'finalizada']
+                exclude: ['id', 'titulo', 'sobre', 'data', 'duracao', 'impacto', 'politica_id', 'cadastro', 'qtd_vagas', 'empresa_id', 'ong_id', 'ods_id', 'capa', 'causa_id', 'cep', 'rua', 'bairro', 'cidade', 'estado', 'qtd_volun', 'disponivel', 'finalizada']
             }
         })
 

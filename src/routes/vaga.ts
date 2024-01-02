@@ -6,6 +6,7 @@ import multer from 'multer';
 import crypto from 'crypto'
 import { getCausas } from '../controllers/causaController';
 import { getOds } from '../controllers/odsController';
+import { getPoliticas } from '../controllers/politicaController';
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -59,3 +60,4 @@ vagaRoute.delete('/deletar/vaga/:id', verifyToken, deletarVaga)
 
 vagaRoute.get('/causas', getCausas)
 vagaRoute.get('/ods', getOds)
+vagaRoute.get('/politicas', getPoliticas)

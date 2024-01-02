@@ -16,7 +16,7 @@ export interface VagaInstance extends Model {
     qtd_volun: number;
     duracao: number;
     impacto: number;
-    politica: string;
+    politica_id: number;
     capa: string;
     empresa_id: number;
     causa_id: number;
@@ -52,9 +52,6 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
     impacto: {
         type: DataTypes.INTEGER
     },
-    politica: {
-        type: DataTypes.STRING
-    },
     cadastro: {
         type: DataTypes.DATE
     },
@@ -80,6 +77,10 @@ export const Vaga = sequelize.define<VagaInstance>("Vagas", {
     ods_id: {
         type: DataTypes.INTEGER,
         references: { model: 'ods', key: 'id' },
+    },
+    politica_id: {
+        type: DataTypes.INTEGER,
+        references: { model: 'politicas', key: 'id' },
     },
     cep: {
         type: DataTypes.STRING
