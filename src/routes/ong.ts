@@ -35,5 +35,5 @@ ongRoute.get('/ongs/id/:id', getOngById)
 ongRoute.get('/ongs/email/:email', getOngByEamil)
 
 ongRoute.post('/ongs/cadastrar', cadastrarOng)
-ongRoute.post('/ongs/atualizar', atualizarOng)
+ongRoute.put('/ongs/id/:id', verifyToken, atualizarOng)
 ongRoute.post('/ongs/logo', verifyToken, upload.single('logo'), adicionarLogoOng)

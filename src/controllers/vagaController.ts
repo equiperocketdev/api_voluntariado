@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Vaga, VagaInstance } from '../models/vagasModel'
 import { Causa } from '../models/causaModel'
 import { VagaUsuario } from '../models/vagaUsuarioModel'
-import { VagaEmpresa } from '../models/vagaEmpresaModel'
+import { VagaEmpresa } from '../models/VagaEmpresaModel'
 import { Op, where } from 'sequelize'
 import { Ong } from '../models/ongModel'
 import { Ods } from '../models/odsModel'
@@ -334,6 +334,10 @@ export const listarVagasEmpresa = async (req: Request, res: Response) => {
                 empresa_id: id
             },
             include: [{
+                model: Ong,
+                attributes: ['id', 'nome', 'email', 'logo', 'sobre']
+            },
+            {
                 model: Empresa,
                 attributes: ['id', 'nome', 'email', 'logo', 'sobre']
             }]
@@ -448,6 +452,26 @@ export const getVaga = async (req: Request, res: Response) => {
 export const verificaAssociacao = async (req: Request, res: Response) => {
     const empresa_id = req.user
     const { vaga_id } = req.params
+
+    try {
+        const associado = await VagaEmpresa.findOne({
+            where: {
+                [Op.and]: [
+                    { empresa_id },
+                    { vaga_id }
+                ]
+            }
+        })
+        if(!associado) return res.send()
+
+        return res.status(200).json(associado)
+    } catch (error) {
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const verificaEmpresaAssociada = async (req: Request, res: Response) => {
+    const { vaga_id, empresa_id } = req.params
 
     try {
         const associado = await VagaEmpresa.findOne({

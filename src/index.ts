@@ -11,12 +11,16 @@ import { enderecoRoute } from './routes/endereco';
 import { vagaRoute } from './routes/vaga';
 import { loginRoute } from './routes/login';
 import { relatoriosRoute } from './routes/relatorios';
+import swaggerDocs from "./swagger.json"
+import swaggerUi from "swagger-ui-express"
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 app.use(cors());
 
