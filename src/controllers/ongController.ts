@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import { Op } from 'sequelize'
 import { criptografarSenha } from '../auth/bcrypt'
 import { Ong, OngInstance } from '../models/ongModel'
+import { Endereco } from '../models/enderecoModel'
+import { Vaga } from '../models/vagasModel'
 
 export const listarOngs = async (req: Request, res: Response) => {
     try {
@@ -39,6 +41,25 @@ export const cadastrarOng = async (req: Request, res: Response) => {
     }
 }
 
+export const getOngById = async (req: Request, res: Response) => {
+    const id = req.params.id
+
+    try {
+        const ong = await Ong.findByPk(id, {
+            include: [{
+                model: Vaga
+            }],
+            attributes: {
+                exclude: ['senha']
+            }
+        })
+        
+        return res.status(200).json(ong)
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
 export const getOngByName = async (req: Request, res: Response) => {
     try {
         const nome = req.params.nome
@@ -50,9 +71,27 @@ export const getOngByName = async (req: Request, res: Response) => {
             },
             attributes: {
                 exclude: ['senha']
-            }
+            },
+            include: [{
+                model: Endereco
+            }]
         })
         res.status(200).json(ongs)
+    } catch (error) {
+        res.status(400).json("Deu ruim: " + error)
+    }
+}
+
+export const getOngByEamil = async (req: Request, res: Response) => {
+    const { email } = req.params
+
+    try {
+        const ong = await Ong.findOne({
+            where: { email }, 
+            attributes: ['id', 'nome', 'email']
+        })
+        
+        return res.status(200).json(ong)
     } catch (error) {
         res.status(400).json("Deu ruim: " + error)
     }

@@ -1,0 +1,430 @@
+{
+    "openapi": "3.1.0",
+    "version": "2.1.0",
+    "info": {
+        "title": "API Voluntariado",
+        "description": "API com o objetivo de manipular as informações referentes à plataforma de voluntariado do CBVE(conselho brasileiro de voluntariado empresarial).",
+        "contact": {
+            "email": "equiperocket.dev@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api-voluntariado.onrender.com",
+            "description": "API em produção"
+        },
+        {
+            "url": "https://localhost:3000",
+            "description": "API de teste"
+        }
+    ],
+    "paths": {
+        "/empresas": {
+            "get": {
+                "summary": "Listar empresas",
+                "tags": ["Empresas"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Empresa"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cadastrar empresa",
+                "tags": ["Empresas"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Empresa"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empresa cadastrada com sucesso!"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/empresas/id/:id": {
+            "put": {
+                "summary": "Atualizar empresa",
+                "tags": ["Empresas"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/empresas/info": {
+            "get": {
+                "summary": "Detalhar empresa",
+                "tags": ["Empresas"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/empresas/deletar": {
+            "delete": {
+                "summary": "Deletar empresa",
+                "tags": ["Empresas"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/ongs": {
+            "get": {
+                "summary": "Listar instituições",
+                "tags": ["Instituições"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Ong"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cadastrar instituição",
+                "tags": ["Instituições"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Ong"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Instituição cadastrada com sucesso!"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/ongs/id/:id": {
+            "put": {
+                "summary": "Atualizar instituição",
+                "tags": ["Instituições"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/ongs/deletar": {
+            "delete": {
+                "summary": "Deletar instituição",
+                "tags": ["Instituições"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/usuarios": {
+            "get": {
+                "summary": "Listar voluntários",
+                "description": "Lista os usuarios referentes à uma empresa",
+                "tags": ["Voluntários"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Voluntario"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cadastrar voluntário",
+                "tags": ["Voluntários"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Voluntario"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Voluntário cadastrado com sucesso!"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/usuarios/id/:id": {
+            "put": {
+                "summary": "Atualizar voluntário",
+                "tags": ["Voluntários"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/usuarios/deletar": {
+            "delete": {
+                "summary": "Deletar Usuario",
+                "tags": ["Voluntários"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/vagas/cadastrar": {
+            "post": {
+                "summary": "Cadastrar ação",
+                "tags": ["Ações"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/vagas/": {
+            "get": {
+                "summary": "Listar ações",
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/vagas/:causa": {
+            "get": {
+                "summary": "Listar ações pela causa",
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/vagas/info/:vaga_id": {
+            "get": {
+                "summary": "Detalhar ação",
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/vagas/listar/ultimas": {
+            "get": {
+                "summary": "Listar ações recentes",
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/local/vagas/:bairro/:estado": {
+            "get": {
+                "summary": "Listar ações no bairro",
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/vagas/editar/:vaga_id": {
+            "put": {
+                "summary": "Atualizar ação",
+                "security": [{ "bearerAuth": [] }],
+                "tags": ["Ações"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Dados inconsistentes ou erro!"
+                    }
+                }
+            }
+        },
+        "/deletar/vaga/:id": {
+            "delete": {
+                "summary": "Deletar ação",
+                "security": [{ "bearerAuth": [] }],
+                "tags": ["Ações"],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Empresa": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "number"},
+                    "cnpj": {"type": "string"},
+                    "nome": {"type": "string"},
+                    "email": {"type": "string"},
+                    "senha": {"type": "string"},
+                    "cadastro": {"type": "date"},
+                    "sobre": {"type": "string"},
+                    "logo": {"type": "string"},
+                    "site": {"type": "string"},
+                    "instagram": {"type": "string"}
+                }
+            },
+            "Ong": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "number"},
+                    "nome": {"type": "string"},
+                    "email": {"type": "string"},
+                    "senha": {"type": "string"},
+                    "cadastro": {"type": "date"},
+                    "sobre": {"type": "string"},
+                    "logo": {"type": "string"}
+                }
+            },
+            "Voluntario": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "number"},
+                    "nome": {"type": "string"},
+                    "sobrenome": {"type": "string"},
+                    "email": {"type": "string"},
+                    "senha": {"type": "string"},
+                    "telefone": {"type": "string"},
+                    "tempo_volun": {"type": "string"},
+                    "cadastro": {"type": "date"},
+                    "empresa_id": {"type": "number"},
+                    "data_nacs": {"type": "date"},
+                    "avatar": {"type": "string"}
+                }
+            },
+            "Acao": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "number"},
+                    "titulo": {"type": "string"},
+                    "sobre": {"type": "string"},
+                    "data": {"type": "date"},
+                    "cadastro": {"type": "date"},
+                    "qtd_vagas": {"type": "number"},
+                    "qtd_volun": {"type": "number"},
+                    "impacto": {"type": "number"},
+                    "politica_id": {"type": "number"},
+                    "causa_id": {"type": "number"},
+                    "ods_id": {"type": "number"},
+                    "empresa_id": {"type": "number"},
+                    "ong_id": {"type": "number"},
+                    "capa": {"type": "string"},
+                    "disponivel": {"type": "boolean"},
+                    "finalizada": {"type": "boolean"},
+                    "cep": {"type": "string"},
+                    "rua": {"type": "string"},
+                    "bairro": {"type": "string"},
+                    "cidade": {"type": "string"},
+                    "estado": {"type": "string"}
+                }
+            }
+        },
+        "securitySchemas": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

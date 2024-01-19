@@ -5,6 +5,7 @@ import { criptografarSenha } from '../auth/bcrypt'
 import { User } from '../models/userModel'
 import { isEmpresa } from '../auth/verifyType'
 import { Vaga } from '../models/vagasModel'
+import { Endereco } from "../models/enderecoModel";
 
 export const listarEmpresas = async (req: Request, res: Response) => {
     try {
@@ -26,23 +27,18 @@ export const listarEmpresas = async (req: Request, res: Response) => {
     }
 }
 
-export const getEmpresaByName = async (req: Request, res: Response) => {
+export const getEmpresaByEmail = async (req: Request, res: Response) => {
     try {
-        const { nome } = req.params
-        const empresas = await Empresa.findAll({
-            where: {
-                nome: {
-                    [Op.iLike]: `%${nome}%`
-                }
-            },
-            attributes: {
-                exclude: ['senha']
-            },
-            order: ['nome']
-        })
-        return res.status(200).json(empresas)
+        const { email } = req.params
 
-    } catch (error) {
+        const empresa = await Empresa.findOne({
+            where: { email },
+            attributes: ['id', 'nome', 'email']
+        })
+
+        return res.status(200).json(empresa)
+    } 
+    catch (error) {
         res.status(400).json({message: error})
     }
 }
@@ -51,10 +47,7 @@ export const getEmpresaById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const empresa = await Empresa.findByPk(id, {
-            include: [{
-                model: User,
-                attributes: ['nome']
-            }],
+            include: [ { model: Endereco } ],
             attributes: {
                 exclude: ['senha']
             }
@@ -93,7 +86,7 @@ export const cadastrarEmpresa = async (req: Request, res: Response) => {
         return res.status(201).send()
 
     } catch (error) {
-        res.json("Mensagem: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 

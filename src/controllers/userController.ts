@@ -7,23 +7,23 @@ import { Endereco } from '../models/enderecoModel'
 import { Vaga } from '../models/vagasModel'
 import { transport } from '../config/nodemailer'
 
-export const listarUsuarios = async (req: Request, res: Response) => {
+export const listarUsuariosEmpresa = async (req: Request, res: Response) => {
+    const empresa_id = req.user
+
     try {
         const usuarios = await User.findAll({
-            attributes: {
-                exclude: ['senha'],
+            where: {
+                empresa_id
             },
-            order: ['id'],
-            include: [{
-                model: Empresa,
-                attributes: ['id', 'nome']
-            }]
+            attributes: {
+                exclude: ['senha']
+            }
         })
 
         return res.status(200).json(usuarios)
     }
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
@@ -48,7 +48,27 @@ export const getUserByName = async (req: Request, res: Response) => {
         res.status(200).json(users)
 
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
+    }
+}
+
+export const getUserByEmail = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params
+
+        const user = await User.findOne({
+            where: { email },
+            attributes: ['id', 'nome', 'email', 'empresa_id']
+        })
+
+        if (!user) {
+            return res.status(404).json("Usuário não encontrado!")
+        }
+
+        return res.status(200).json(user)
+    }
+    catch (error) {
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
@@ -58,9 +78,9 @@ export const getUserById = async (req: Request, res: Response) => {
 
         const user = await User.findByPk(id, {
             include: [{
-                model: Empresa, 
+                model: Empresa,
                 attributes: ['nome']
-            }],
+            }, {model: Vaga}],
             attributes: { exclude: ['senha']}
         })
 
@@ -71,14 +91,14 @@ export const getUserById = async (req: Request, res: Response) => {
         return res.status(200).json(user)
     }
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
 export const cadastrarUsuario = async (req: Request, res: Response) => {
     const { nome, sobrenome, email, senha, telefone, data_nasc, empresa_id } = req.body
 
-    if (!nome || !sobrenome || !email || !senha || !telefone || !data_nasc) {
+    if (!nome || !sobrenome || !email || !senha || !empresa_id) {
         return res.status(400).json("Digite todos os dados!")
     }
 
@@ -108,7 +128,7 @@ export const cadastrarUsuario = async (req: Request, res: Response) => {
 
         return res.status(201).send()
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 
 }
@@ -126,7 +146,7 @@ export const atualizarUsuario = async (req: Request, res: Response) => {
         return res.status(201).send()
     } 
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
@@ -141,7 +161,7 @@ export const deletarUsuario = async (req: Request, res: Response) => {
         }
     } 
     catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
@@ -163,7 +183,7 @@ export const perfil = async (req: Request, res: Response) => {
         return res.status(200).json(user)
         
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
 
@@ -182,6 +202,6 @@ export const adicionarAvatar = async (req: Request, res: Response) => {
 
         return res.status(201).send()
     } catch (error) {
-        res.status(400).json("Deu ruim: " + error)
+        res.status(400).json("Mensagem: " + error)
     }
 }
