@@ -4,7 +4,7 @@ import { User } from "./userModel";
 import { Ong } from "./ongModel";
 import { VagaUsuario } from "./vagaUsuarioModel";
 import { Empresa } from "./empresaModel";
-import { VagaEmpresa } from "./vagaEmpresaModel";
+import { VagaEmpresa } from "./VagaEmpresaModel";
 
 export interface VagaInstance extends Model {
     id: number;

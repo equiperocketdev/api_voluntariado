@@ -35,7 +35,7 @@ userRoute.get('/usuarios/email/:email', getUserByEmail)
 userRoute.get('/usuarios/buscar/:nome', getUserByName)
 
 userRoute.post('/usuarios/cadastrar', cadastrarUsuario)
-userRoute.put('/usuarios/atualizar',verifyToken, atualizarUsuario)
+userRoute.put('/usuarios/id/:id',verifyToken, atualizarUsuario)
 userRoute.delete('/usuarios/deletar',verifyToken, deletarUsuario)
 
 userRoute.get('/usuarios/perfil', verifyToken, perfil)

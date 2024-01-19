@@ -1,5 +1,5 @@
 import express from 'express';
-import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa, listarVagasCidade, getVaga, verificaAssociacao, removeAssociacao, ultimasVagas, removerInscricao, verificaInscricao, listarVoluntarios, finalizarVaga, marcarPresenca, vagasLocal, deletarVaga, editarVaga } 
+import { cadastrarVaga, fazerInscricao, filtrarVagas, listarVagas, listarVagasOng, associarEmpresa, listarVagasEmpresa, adicionarCapa, listarVagasCidade, getVaga, verificaAssociacao, removeAssociacao, ultimasVagas, removerInscricao, verificaInscricao, listarVoluntarios, finalizarVaga, marcarPresenca, vagasLocal, deletarVaga, editarVaga, verificaEmpresaAssociada } 
 from '../controllers/vagaController';
 import { verifyToken } from '../config/passport';
 import multer from 'multer';
@@ -40,6 +40,7 @@ vagaRoute.get('/vagas/cidade/:cidade', listarVagasCidade)
 vagaRoute.get('/vagas/empresa/vagas/:id', listarVagasEmpresa)
 vagaRoute.get('/vagas/info/:vaga_id', getVaga)
 vagaRoute.get('/vagas/verificar/empresa/:vaga_id', verifyToken, verificaAssociacao)
+vagaRoute.get('/vagas/verificar/associada/:vaga_id/:empresa_id', verifyToken, verificaEmpresaAssociada)
 vagaRoute.get('/vagas/verificar/usuario/:vaga_id', verifyToken, verificaInscricao)
 vagaRoute.get('/vagas/listar/ultimas', ultimasVagas)
 vagaRoute.get('/local/vagas/:bairro/:estado', verifyToken, vagasLocal)

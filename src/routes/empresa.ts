@@ -37,5 +37,5 @@ empresaRoute.get('/empresas/vagas', verifyToken, listarVagasEmpresa)
 
 empresaRoute.post('/empresas/cadastrar', cadastrarEmpresa)
 empresaRoute.post('/empresas/logo', verifyToken, upload.single('logo'), adicionarLogo)
-empresaRoute.put('/empresas/atualizar', verifyToken, atualizarEmpresa)
+empresaRoute.put('/empresas/id/:id', verifyToken, atualizarEmpresa)
 empresaRoute.delete('/empresas/deletar', verifyToken, deletarEmpresa)

@@ -58,7 +58,7 @@ export const getUserByEmail = async (req: Request, res: Response) => {
 
         const user = await User.findOne({
             where: { email },
-            attributes: ['id', 'nome', 'email']
+            attributes: ['id', 'nome', 'email', 'empresa_id']
         })
 
         if (!user) {
